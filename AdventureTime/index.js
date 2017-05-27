@@ -28,6 +28,7 @@ var languageString = {
             "ACTION_UNHANDLED": "Action not recognized",
             "HELP_UNHANDLED": "Say yes to continue, or no to end the game.",
             "START_UNHANDLED": "Please specify the adventure to embark.",
+            "ADVENTURE_STARTED":"Welcome to %s: Id %s",
             "NEW_GAME_MESSAGE": "Welcome to %s. ",
             "SELECT_ADVENTURE_MESSAGE": "Please select one of the following adventures %s",
             "WELCOME_MESSAGE": "I will read you a scenario. You must specify what actions you would take depending on the circumstances.",
@@ -63,13 +64,10 @@ var gameHandlers = {
     },
     "SelectGameIntent": function () {
         var inputAdventure = this.event.request.intent.slots.Game.value;
-        console.log(inputAdventure);
-        adventures["GAMES"].forEach(function (element) {
-            if (element.title === inputAdventure) {
-                this.emit(":ask", element.scenarios[0].scene, element.scenarios[0].scene);
-            }
-        }, this);
-        //this.emit(":ask", speechOutput, speechOutput);
+        adventures.getGame(function (game, alexaCb) {
+            var speechOutput = alexaCb.t("ADVENTURE_STARTED", game.name,game.id);
+            alexaCb.emit(":ask", speechOutput, speechOutput);
+        }, this, inputAdventure);
     },
     "Unhandled": function () {
         var speechOutput = this.t("START_UNHANDLED");
