@@ -67,6 +67,7 @@ function parseResponse(str, userAnswer, callback) {
     }
 
     result = result.substr(0, result.indexOf("</td>"));
+    result = result.replace(/<p class="status">.*<\/p>/, '' );
 
     var regex = /(<([^>]+)>)/ig,
         body = result,

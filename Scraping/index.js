@@ -47,6 +47,7 @@ function prseResponse(str, answer) {
   //console.log(res2);
 
   result = result.substr(0, result.indexOf("</td>"));
+  result = result.replace(/<p class="status">.*<\/p>/, '' );
 
   var regex = /(<([^>]+)>)/ig,
     body = result,
@@ -103,4 +104,4 @@ function cleanUp(str)
 }
 
 
-callGame("Zork3", uuidV1(), '');
+callGame("Galatea", uuidV1(), '');
