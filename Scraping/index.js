@@ -1,7 +1,6 @@
 var http = require('http');
 
-function callGame(game, sessionId, answer)
-{
+function callGame(game, sessionId, answer) {
   var result;
   //The url we want is: 'www.random.org/integers/?num=1&min=1&max=10&col=1&base=10&format=plain&rnd=new'
   var options = {
@@ -11,7 +10,7 @@ function callGame(game, sessionId, answer)
   //console.log("path=" , options.path);
 
 
-  callback = function(response, callback) {
+  callback = function (response, callback) {
     var str = '';
 
     //another chunk of data has been recieved, so append it to `str`
@@ -25,7 +24,7 @@ function callGame(game, sessionId, answer)
 
       //console.log(result);
 
-      prseResponse(str,answer);
+      prseResponse(str, answer);
     });
   }
 
@@ -33,29 +32,24 @@ function callGame(game, sessionId, answer)
 
 }
 
-function prseResponse(str, answer)
-{
-  var result='';
+function prseResponse(str, answer) {
+  var result = '';
 
   //console.log(str.length);
 
-  if (answer)
-  {
-    result = str.substr(str.lastIndexOf(answer)
-    +answer.length
-    ,str.length);
-  }
-  else
-  {
-    result = str.substr(str.lastIndexOf('<td width="80%" valign="top">'),str.length);
+  if (answer) {
+    result = str.substr(str.lastIndexOf(answer) +
+      answer.length, str.length);
+  } else {
+    result = str.substr(str.lastIndexOf('<td width="80%" valign="top">'), str.length);
   }
   //console.log(res2);
 
-  result = result.substr(0,result.indexOf("</td>"));
+  result = result.substr(0, result.indexOf("</td>"));
 
-  var regex = /(<([^>]+)>)/ig
-,   body = result
-,   res2 = body.replace(regex, "");
+  var regex = /(<([^>]+)>)/ig,
+    body = result,
+    res2 = body.replace(regex, "");
 
   console.log(res2);
 
@@ -64,4 +58,4 @@ function prseResponse(str, answer)
 }
 
 
-callGame("905","123567",'');
+callGame("905", "123567", '');
