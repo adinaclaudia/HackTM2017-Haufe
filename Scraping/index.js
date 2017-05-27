@@ -1,4 +1,5 @@
 var http = require('http');
+const uuidV1 = require('uuid/v1');
 
 function callGame(game, sessionId, answer) {
   var result;
@@ -51,11 +52,55 @@ function prseResponse(str, answer) {
     body = result,
     res2 = body.replace(regex, "");
 
-  console.log(res2);
+  res2 = cleanUp(res2);
+
+  //console.log(res2);
 
   //result =
 
 }
 
+function cleanUp(str)
+{
+  var result = str;
 
-callGame("905", "123567", '');
+  //console.log(str.indexOf('----'));
+
+  result = str.replace(/-----[\s\S]*?[\s\S]-----/, '' );
+
+  result = result.replace(/LARS[\s\S]*?[\s\S]6\/11/, '' );
+
+  result = result.replace(/THE ACORN[\s\S]*?[\s\S]1\.0/, '' );
+  
+  result = result.replace(/ADVENTURE[\s\S]*?[\s\S]6\/11 S/, '' );
+
+  result = result.replace(/A BEAR\'S[\s\S]*?[\s\S] 6\/7/, '' );
+  
+  result = result.replace(/Copyright[\s\S]*?[\s\S] 6\/10/, '' );
+
+  result = result.replace(/Copyright[\s\S]*?[\s\S]interpreter 1\.0/, '' );
+  
+  result = result.replace(/The Interactive[\s\S]*?[\s\S]interpreter 1\.0/, '' );
+
+  result = result.replace(/Copyright[\s\S]*?[\s\S]840726/, '' );
+
+  result = result.replace(/Copyright[\s\S]*?[\s\S]840904/, '' );
+
+  result = result.replace(/Copyright[\s\S]*?[\s\S]840727/, '' );
+
+  result = result.replace(/Release[\s\S]*?[\s\S] 6\/7/, '' );
+  
+
+  console.log(result);
+
+  //if (str.indexOf('----') > -1)
+  //{
+  //  part1 =  str.substr(0,str.indexOf('----'));//  str.substr(str.indexOf('----')+4,str.lastIndexOf('----'));
+  //
+  //}
+  return result;
+
+}
+
+
+callGame("Zork3", uuidV1(), '');
