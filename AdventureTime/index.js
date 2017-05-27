@@ -15,7 +15,6 @@ var adventures = require("./gamesRepo");
 var languageString = {
     "en-US": {
         "translation": {
-            "ADVENTURES": adventures,
             "GAME_NAME": "Adventure Time", // Be sure to change this for your skill.
             "SELECT_ADVENTURE": "Please select an adventure to play",
             "HELP_MESSAGE": "I will read you a scenario for %s. Respond with the action you think you should take. " +
@@ -47,27 +46,31 @@ exports.handler = function (event, context, callback) {
     // To enable string internationalization (i18n) features, set a resources object.
     alexa.resources = languageString;
     //alexa.registerHandlers(newSessionHandlers, selectGameHandlers, startStateHandlers, triviaStateHandlers, helpStateHandlers);
-    alexa.registerHandlers(newSessionHandlers, selectGameHandlers);
+    alexa.registerHandlers(gameHandlers);
     alexa.execute();
 };
 
-var newSessionHandlers = {
-    "AboutIntent": function () {
-        var adventureNames = "";
+var gameHandlers = {
+    "HomeIntent": function () {
+        adventures.getGames(function (games, alexaCb) {
+            var adventureNames = "";
+            games.forEach(function (element) {
+                adventureNames += element.name + ", ";
+            });
+            var speechOutput = alexaCb.t("NEW_GAME_MESSAGE", alexaCb.t("GAME_NAME")) + alexaCb.t("SELECT_ADVENTURE_MESSAGE", adventureNames);
+            alexaCb.emit(":ask", speechOutput, speechOutput);
+        }, this);
+    },
+    "SelectGameIntent": function () {
+        var inputAdventure = this.event.request.intent.slots.Game.value;
+        console.log(inputAdventure);
         adventures["GAMES"].forEach(function (element) {
-            for (var adventureName in element) {
-                adventureNames = adventureNames + " " + adventureName;
+            if (element.title === inputAdventure) {
+                this.emit(":ask", element.scenarios[0].scene, element.scenarios[0].scene);
             }
         }, this);
-        var speechOutput = this.t("NEW_GAME_MESSAGE", this.t("GAME_NAME")) + this.t("SELECT_ADVENTURE_MESSAGE", adventureNames);
-        this.emit(":ask", speechOutput, speechOutput);
-        // this.handler.state = GAME_STATES.SELECT_ADVENTURE;
-        // this.emitWithState("SelectGame", true);
+        //this.emit(":ask", speechOutput, speechOutput);
     },
-    // "AMAZON.HelpIntent": function () {
-    //     this.handler.state = GAME_STATES.HELP;
-    //     this.emitWithState("helpTheUser", true);
-    // },
     "Unhandled": function () {
         var speechOutput = this.t("START_UNHANDLED");
         this.emit(":ask", speechOutput, speechOutput);

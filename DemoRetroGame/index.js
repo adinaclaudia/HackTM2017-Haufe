@@ -107,20 +107,28 @@ function getWelcomeResponse(callback) {
 }
 
 function playGame(intent, session, callback) {
-    const userAnswer = intent.slots.Text;
-    console.log("User answer: "+ userAnswer);
-    callGameWaterfall(sessionAttributes.game, sessionAttributes.sessionId, userAnswer, (result) => {
-        console.log("Result was received: " + result);
-        const cardTitle = intent.name + sessionAttributes.game;
-        const speechOutput = result;
-        // If the user either does not reply to the welcome message or says something that is not
-        // understood, they will be prompted again with this text.
-        const repromptText = result;
-        const shouldEndSession = false;
-
+    const textSlot = intent.slots.Text;
+    const cardTitle = intent.name + sessionAttributes.game;
+    const shouldEndSession = false;
+    if(textSlot){
+        const userAnswerValue = textSlot.value;
+        console.log("User answer: "+ userAnswerValue);
+        callGameWaterfall(sessionAttributes.game, sessionAttributes.sessionId, userAnswerValue, (result) => {
+            console.log("Result was received: " + result);
+            const speechOutput = result;
+            // If the user either does not reply to the welcome message or says something that is not
+            // understood, they will be prompted again with this text.
+            const repromptText = result;
+            callback(sessionAttributes,
+                buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
+        });
+    }
+    else{
+        speechOutput = "I'm not sure what you said. Please try again.";
+        repromptText = "Can you try again please?";
         callback(sessionAttributes,
-            buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
-    });
+                buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
+    }
 }
 
 // function handleSuperIntent(intent, session, callback) {
