@@ -7,11 +7,10 @@ function getWelcomeResponse(callback) {
     // If we wanted to initialize the session to have some attributes we could add those here.
     const sessionAttributes = {};
     const cardTitle = 'Welcome';
-    const speechOutput = 'Welcome to the Alexa Skills Kit sample. ' +
-        'Please tell something to repeat';
+    const speechOutput = 'Welcome Copy Cat. Please tell something to repeat';
     // If the user either does not reply to the welcome message or says something that is not
     // understood, they will be prompted again with this text.
-    const repromptText = 'Say something and i will repeat after you';
+    const repromptText = 'Say something and I will repeat after you';
     const shouldEndSession = false;
 
     callback(sessionAttributes,
