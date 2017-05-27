@@ -61,8 +61,9 @@ function parseResponse(str, userAnswer, callback) {
     //console.log(str.length);
 
     if (userAnswer) {
-        result = str.substr(str.lastIndexOf(userAnswer) +
-            userAnswer.length, str.length);
+        let userAnswerWrapper = userAnswer+'</font>';
+        result = str.substr(str.lastIndexOf(userAnswerWrapper) +
+            userAnswerWrapper.length, str.length);
     } else {
         result = str.substr(str.lastIndexOf('<td width="80%" valign="top">'), str.length);
     }
@@ -116,9 +117,7 @@ function getGames(callback) {
 }
 
 // Intents ------------------------
-const sessionAttributes = {
-    selectedGame: "905"
-};
+const sessionAttributes = {};
 
 function getWelcomeResponse(callback) {
     // If we wanted to initialize the session to have some attributes we could add those here.
@@ -163,22 +162,29 @@ function getWelcomeResponse(callback) {
 }
 
 function selectGame(intent, session, callback) {
-    const textSlot = intent.slots.Text;
+    //TODO if selecting after game has started, retry
+    const gameSlot = intent.slots.Game;
 
     const shouldEndSession = false;
-    if (textSlot) {
-        let game = textSlot.value;
-        console.log("selected game name: " + game);
-        let selectedGame = sessionAttributes.games.find(item => {
-            return item.name == game;
-        });
-        if (selectedGame) {
-            console.log("corresponding game id: " + selectedGame.id[0]);
-            sessionAttributes.selectedGame = selectedGame.id[0];
+    try {
+        if (gameSlot) {
+            let game = gameSlot.value;
+            console.log("selected game name: " + game);
+            let selectedGame = sessionAttributes.games.find(item => {
+                return item.name.toLowerCase() === game.toLowerCase();
+            });
+            if (selectedGame) {
+                console.log("corresponding game id: " + selectedGame.id[0]);
+                sessionAttributes.selectedGame = selectedGame.id[0];
+            } else {
+                throw new Error("did not recognize game");
+            }
+            playGame(intent.name, null, callback);
+        } else {
+            throw new Error("did not get game slot");
         }
-        playGame(intent, session, callback);
-    } else {
-        console.log("did not recognize game");
+    } catch (error) {
+        console.error(error);
         let speechOutput = 'Sorry but I did not recognize selected game. Please select one of: ' + sessionAttributes.adventureNames;
         let repromptText = 'Please select one of: ' + sessionAttributes.adventureNames;
         callback(sessionAttributes,
@@ -186,28 +192,34 @@ function selectGame(intent, session, callback) {
     }
 }
 
-function playGame(intent, session, callback) {
+function handlePlayGame(intent, session, callback) {
     const textSlot = intent.slots.Text;
-    const cardTitle = intent.name + sessionAttributes.selectedGame;
-    const shouldEndSession = false;
     if (textSlot) {
         const userAnswerValue = textSlot.value;
         console.log("User answer: " + userAnswerValue);
-        callGameWaterfall(sessionAttributes.selectedGame, sessionAttributes.sessionId, userAnswerValue, (result) => {
-            console.log("Result was received: " + result);
-            const speechOutput = result;
-            // If the user either does not reply to the welcome message or says something that is not
-            // understood, they will be prompted again with this text.
-            const repromptText = result;
-            callback(sessionAttributes,
-                buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
-        });
+        playGame(intent.name, userAnswerValue, callback);
     } else {
-        speechOutput = "I'm not sure what you said. Please try again.";
-        repromptText = "Can you try again please?";
+        const cardTitle = intent.name + sessionAttributes.selectedGame;
+        const shouldEndSession = false;
+        let speechOutput = "I'm not sure what you said. Please try again.";
+        let repromptText = "Can you try again please?";
         callback(sessionAttributes,
             buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
     }
+}
+
+function playGame(intentName, userAnswer, callback){
+    const cardTitle = intentName + sessionAttributes.selectedGame;
+    const shouldEndSession = false;
+    callGameWaterfall(sessionAttributes.selectedGame, sessionAttributes.sessionId, userAnswer, (result) => {
+        console.log("Result was received: " + result);
+        const speechOutput = result;
+        // If the user either does not reply to the welcome message or says something that is not
+        // understood, they will be prompted again with this text.
+        const repromptText = result;
+        callback(sessionAttributes,
+            buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
+    });
 }
 
 // function handleSuperIntent(intent, session, callback) {
@@ -262,7 +274,7 @@ function onIntent(intentRequest, session, callback) {
     if (intentName === 'SelectGameIntent') {
         selectGame(intent, session, callback);
     } else if (intentName === 'PlayGameIntent') {
-        playGame(intent, session, callback);
+        handlePlayGame(intent, session, callback);
     } else if (intentName === 'AMAZON.StopIntent' || intentName === 'AMAZON.CancelIntent') {
         handleSessionEndRequest(callback);
     } else {
