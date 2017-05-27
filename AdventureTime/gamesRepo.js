@@ -1,7 +1,7 @@
 'use strict';
 var https = require('https');
 module.exports = {
-    getGames: function (callback) {
+    getGames: function (callback,alexa) {
         var options = {
             host: 'wrapapi.com',
             path: '/use/raulfiru/endpoints/games/latest?wrapAPIKey=4bgBkwkb3PyVnuM8gggKfq251AQq2tuo',
@@ -13,7 +13,7 @@ module.exports = {
             });
             res.on('end', function () {
                 var data=JSON.parse(str).data;
-                callback(data.output[0].games);
+                callback(data.output[0].games,alexa);
             });
 
 

@@ -52,14 +52,14 @@ exports.handler = function (event, context, callback) {
 
 var gameHandlers = {
     "HomeIntent": function () {
-        adventures.getGames(function (games) {
+        adventures.getGames(function (games, alexaCb) {
             var adventureNames = "";
             games.forEach(function (element) {
-                adventureNames += element.name+", ";
-            }, this);
-            var speechOutput = this.t("NEW_GAME_MESSAGE", this.t("GAME_NAME")) + this.t("SELECT_ADVENTURE_MESSAGE", adventureNames);
-            this.emit(":ask", speechOutput, speechOutput);
-        });
+                adventureNames += element.name + ", ";
+            });
+            var speechOutput = alexaCb.t("NEW_GAME_MESSAGE", alexaCb.t("GAME_NAME")) + alexaCb.t("SELECT_ADVENTURE_MESSAGE", adventureNames);
+            alexaCb.emit(":ask", speechOutput, speechOutput);
+        }, this);
     },
     "SelectGameIntent": function () {
         var inputAdventure = this.event.request.intent.slots.Game.value;
