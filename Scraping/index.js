@@ -39,10 +39,16 @@ function prseResponse(str, answer)
 
   //console.log(str.length);
 
-  result = str.substr(str.lastIndexOf(answer)
-  +answer.length
-  ,str.length);
-
+  if (answer)
+  {
+    result = str.substr(str.lastIndexOf(answer)
+    +answer.length
+    ,str.length);
+  }
+  else
+  {
+    result = str.substr(str.lastIndexOf('<td width="80%" valign="top">'),str.length);
+  }
   //console.log(res2);
 
   result = result.substr(0,result.indexOf("</td>"));
@@ -58,4 +64,4 @@ function prseResponse(str, answer)
 }
 
 
-callGame("905","1234567",'pick sword');
+callGame("905","123567",'');
