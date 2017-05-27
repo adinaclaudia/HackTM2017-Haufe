@@ -6,6 +6,7 @@
   "dependencies": {
     "async": "^2.4.1",
     "http": "0.0.0",
+    "https": "^1.0.0",
     "uuid": "^3.0.1"
   },
   "devDependencies": {},

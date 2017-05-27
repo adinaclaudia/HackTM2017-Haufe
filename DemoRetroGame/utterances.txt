@@ -1,0 +1,11 @@
+PlayGameIntent {z|Text}
+PlayGameIntent {z z|Text}
+SelectGameIntent select {z|Game}
+SelectGameIntent select {z z|Game}
+SelectGameIntent choose {z|Game}
+SelectGameIntent choose {z z|Game}
+SelectGameIntent play {z|Game}
+SelectGameIntent play {z z|Game}
+ListGamesIntent list games
+ListGamesIntent list
+ListGamesIntent list all
