@@ -18,18 +18,18 @@ function getWelcomeResponse(callback) {
 }
 
 function triggerPipeline (pipelineName) {
-    var http = require("https");
+    var http = require("http");
 
     var options = {
       "method": "POST",
-      "hostname": "gocd-oss.haufe.io",
+      "hostname": "51.4.229.15",
       "port": null,
-      "path": "/go/api/pipelines/hacktm/schedule",
+      "path": "/go/api/pipelines/"+pipelineName+"/schedule",
       "headers": {
+        "authorization": "Basic bGV4X2J1aWxkOkF1dG9jb21waWxlMDg=",
         "confirm": "true",
-        "authorization": "Basic YWRtaW46RGV2T3BzMjAxNg==",
         "cache-control": "no-cache",
-        "postman-token": "cce1395f-638a-2191-c59e-b3c80cb1b3d4"
+        "postman-token": "267731a1-ba2f-ecdb-e3b3-4324cb073edc"
       }
     };
     
@@ -52,19 +52,19 @@ function triggerPipeline (pipelineName) {
 function handleSuperIntent(intent, session, callback) {
     const cardTitle = intent.name;
     const text = intent.slots.PipelineName;
-    //const text = pipelineName.replace(" ", "");
     const action = intent.slots.Action;
     let repromptText = '';
     let sessionAttributes = {};
     const shouldEndSession = false;
     let speechOutput = '';
 
-    if (action.value === "test" || action.value === "deploy") {
+    if (action.value === "test" || action.value === "deploy" ) {
         const textValue = text.value;
         speechOutput = textValue;
         repromptText = "What do you want me to say next?";
         
-        triggerPipeline(text);
+        triggerPipeline(text.value);
+        
     } else {
         speechOutput = "I'm not sure what you said. Please try again.";
         repromptText = "What do you want me to say next?";
