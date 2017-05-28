@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 let games = [{
-        name: "9:05",
+        name: "nine o'clock",
         url: "http://www.web-adventures.org/cgi-bin/webfrotz?s=905",
         id: "905"
     },
@@ -101,12 +101,22 @@ let games = [{
     }
 ];
 
-let adventureNames = "";
-games.forEach(function (element) {
-    adventureNames += element.name + ", ";
-});
+let adventureNames = games.map(function(elem){
+    return elem.name;
+}).join(", ");
+// games.forEach(function (element) {
+//     adventureNames += element.name + ", ";
+// });
+//console.log(adventureNames.substring(adventureNames.indexOf("Zork"), adventureNames.length));
+
+function findGame(gameName) {
+    return games.find(item => {
+        return item.name.toLowerCase() === gameName.toLowerCase();
+    });
+}
 
 module.exports={
     games: games,
-    adventureNames: adventureNames
+    adventureNames: adventureNames,
+    findGame: findGame
 };

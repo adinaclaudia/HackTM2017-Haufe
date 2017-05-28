@@ -7,6 +7,7 @@ const async = require('async');
 
 const availableGames = require('./games').games;
 const adventureNames = require('./games').adventureNames;
+const findGame = require('./games').findGame;
 
 //Logic-----------------
 
@@ -70,7 +71,7 @@ function parseResponse(str, userAnswer, callback) {
     }
 
     result = result.substr(0, result.indexOf("</td>"));
-    result = result.replace(/<p class="status">.*<\/p>/, '' );
+    result = result.replace(/<p class="status">.*<\/p>/, '');
 
     var regex = /(<([^>]+)>)/ig,
         body = result,
@@ -120,14 +121,14 @@ function getGames(callback) {
 }
 
 // Intents ------------------------
-const sessionAttributes = {};
+let sessionAttributes = {};
 
 function getWelcomeResponse(callback) {
     // If we wanted to initialize the session to have some attributes we could add those here.
-    
+    sessionAttributes = {};
     const cardTitle = 'Welcome';
-    let speechOutput = 'Welcome to retro game. Please select a game or use list games if unsure';
-   
+    let speechOutput = 'Welcome to retro games. Please select a game or list games if unsure';
+
     // If the user either does not reply to the welcome message or says something that is not
     // understood, they will be prompted again with this text.
     let repromptText = 'Please select a game to play';
@@ -135,6 +136,7 @@ function getWelcomeResponse(callback) {
     callback(sessionAttributes,
         buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
 }
+
 function listGames(intent, callback) {
 
     const cardTitle = 'ListGames';
@@ -149,35 +151,51 @@ function listGames(intent, callback) {
 }
 
 function selectGame(intent, session, callback) {
-    //TODO if selecting after game has started, retry
-    sessionAttributes.sessionId = uuidV1();
-    const gameSlot = intent.slots.Game;
-
     const shouldEndSession = false;
-    try {
+    // if (sessionAttributes.selectedGame) {
+    //     let speechOutput = 'You are already playing a game. If you want to select a different game please exit first and play new game.';
+    //     let repromptText = 'If you want to select a different game please exit first and play new game.';
+    //     callback(sessionAttributes,
+    //         buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
+    // } else {
+        sessionAttributes.sessionId = uuidV1();
+        const gameSlot = intent.slots.Game;
+        let error = false;
+        //try {
         if (gameSlot) {
             let game = gameSlot.value;
             console.log("selected game name: " + game);
-            let selectedGame = availableGames.find(item => {
-                return item.name.toLowerCase() === game.toLowerCase();
-            });
+            let selectedGame = findGame(game);
             if (selectedGame) {
                 console.log("corresponding game id: " + selectedGame.id);
                 sessionAttributes.selectedGame = selectedGame.id;
             } else {
-                throw new Error("did not recognize game");
+                //throw new Error("did not recognize game");
+                if (game && game.startsWith("zork")) {
+                    let zorkGames = adventureNames.substring(adventureNames.indexOf("Zork"), adventureNames.length);
+                    let speechOutput = 'Which zork game do you want to play? Select one of ' + zorkGames;
+                    let repromptText = speechOutput;
+                    callback(sessionAttributes,
+                        buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
+                } else {
+                    error = true;
+                }
             }
             playGame(intent.name, null, callback);
         } else {
-            throw new Error("did not get game slot");
+            //throw new Error("did not get game slot");
+            error = true;
         }
-    } catch (error) {
-        console.error(error);
-        let speechOutput = 'Sorry but I did not recognize selected game. Please select one of: ' + adventureNames;
-        let repromptText = 'Please select one of: ' + adventureNames;
-        callback(sessionAttributes,
-            buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
-    }
+
+        //} catch (error) {
+        if (error) {
+            console.error(error);
+            let speechOutput = 'Sorry but I did not recognize selected game. Please select one of: ' + adventureNames;
+            let repromptText = 'Please select one of: ' + adventureNames;
+            callback(sessionAttributes,
+                buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
+        }
+    //}
 }
 
 function handlePlayGame(intent, session, callback) {
@@ -240,7 +258,7 @@ function onIntent(intentRequest, session, callback) {
     const intentName = intentRequest.intent.name;
 
     // Dispatch to your skill's intent handlers
-    if(intentName === 'ListGamesIntent') {
+    if (intentName === 'ListGamesIntent') {
         listGames(intentName, callback);
     } else if (intentName === 'SelectGameIntent') {
         selectGame(intent, session, callback);
