@@ -22,7 +22,7 @@ function triggerPipeline (pipelineName) {
 
     var options = {
       "method": "POST",
-      "hostname": "51.4.229.15",
+      "hostname": "-----------",
       "port": null,
       "path": "/go/api/pipelines/"+pipelineName+"/schedule",
       "headers": {
