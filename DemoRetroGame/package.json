@@ -1,9 +1,10 @@
 {
-  "name": "DemoRetroGame",
+  "name": "RetroGame",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "alexa-sdk": "^1.0.9",
     "async": "^2.4.1",
     "http": "0.0.0",
     "https": "^1.0.0",
