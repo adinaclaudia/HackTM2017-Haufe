@@ -1,5 +1,6 @@
 /*jshint esversion: 6 */
 const http = require('http');
+const async = require('async');
 
 /**
  * Cannot get game names via WrapAPI, because not all game names are undesrtood by Alexa. 
@@ -88,17 +89,17 @@ let availableGames = [{
     {
         name: "Zork one",
         url: "http://www.web-adventures.org/cgi-bin/webfrotz?s=Zork1&t=Y",
-        id: "Zork1&amp;t=Y"
+        id: "Zork1"
     },
     {
         name: "Zork two",
         url: "http://www.web-adventures.org/cgi-bin/webfrotz?s=Zork2&t=Y",
-        id: "Zork2&amp;t=Y"
+        id: "Zork2"
     },
     {
         name: "Zork three",
         url: "http://www.web-adventures.org/cgi-bin/webfrotz?s=Zork3&t=Y",
-        id: "Zork3&amp;t=Y"
+        id: "Zork3"
     },
     {
         name: "Zork The Undiscovered Underground",

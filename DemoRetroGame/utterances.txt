@@ -7,5 +7,7 @@ SelectGameIntent choose {z z|Game}
 SelectGameIntent play {z|Game}
 SelectGameIntent play {z z|Game}
 ListGamesIntent list games
-ListGamesIntent list
 ListGamesIntent list all
+ListSavedGamesIntent list saved game
+ListSavedGamesIntent list saved games
+ListSavedGamesIntent list saved

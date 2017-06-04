@@ -20,6 +20,9 @@
     },
     {
       "intent": "ListGamesIntent"
+    },
+    {
+      "intent": "ListSavedGamesIntent"
     }
   ]
 }
