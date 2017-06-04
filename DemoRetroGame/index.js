@@ -23,11 +23,10 @@ let states = {
 };
 
 let genericHandlers = {
-    'LaunchRequest': function () {
-        console.log('launch request');
+    'NewSession': function () {
+        console.log('new session');
         if (Object.keys(this.attributes).length === 0) {
             this.attributes.endedSessionCount = 0;
-            //this.attributes.gamesPlayed = 0;
             this.attributes.gameInProgress = {};
             this.attributes.savedGames = []; //savedGames = [{ id: gameId, name: gameName, session: sessionId }]
         }
@@ -35,6 +34,12 @@ let genericHandlers = {
         //TODO reset game in progress?
         this.handler.state = states.STARTMODE;
         this.emitWithState('Welcome');
+    },
+    'AMAZON.HelpIntent': function () {
+        var message = 'If you don\'t know what games are available, say "list games". ' +
+            'If you want to play a game, say "play" and the game name. ' +
+            'You can always exit and save your game progress';
+        this.emit(':ask', message, message);
     },
     "AMAZON.StopIntent": function () {
         console.log('StopIntent');
@@ -53,6 +58,11 @@ let genericHandlers = {
 };
 
 let startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
+    'NewSession': function () {
+        console.log('startmode new session');
+        this.handler.state = undefined;
+        this.emit('NewSession'); 
+    },
     'Welcome': function() {
         let response = 'Welcome to retro games. ';
         if (this.attributes.savedGames.length !== 0) {
@@ -63,10 +73,7 @@ let startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         this.emit(':ask', response, response);
     },
     'AMAZON.HelpIntent': function () {
-        var message = 'If you don\'t know what games are available, say "list games". ' +
-            'If you want to play a game, say "play" and the game name. ' +
-            'You can always exit and save your game progress';
-        this.emit(':ask', message, message);
+        this.emit('AMAZON.HelpIntent');
     },
     'ListGamesIntent': function () {
         console.log('startmode list games');
@@ -189,6 +196,11 @@ let startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 // });
 
 let playModeHandlers = Alexa.CreateStateHandler(states.PLAYMODE, {
+    'NewSession': function () {
+        console.log('playmode new session');
+        this.handler.state = undefined;
+        this.emit('NewSession'); 
+    },
     'PlayGameIntent': function () {
         console.log('call play game with false');
         this.emitWithState('PlayGame', false);

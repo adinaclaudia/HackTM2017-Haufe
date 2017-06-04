@@ -170,13 +170,16 @@ function gameHttpRequest(game, sessionId, answer, callback) {
 
 function parseResponse(str, userAnswer, callback) {
     var result = '';
+    let userAnswerWrapper = '';
 
+    result = str.substr(str.lastIndexOf('<td width="80%" valign="top">'), str.length);
     if (userAnswer) {
-        let userAnswerWrapper = userAnswer + '</font>';
-        result = str.substr(str.lastIndexOf(userAnswerWrapper) +
-            userAnswerWrapper.length, str.length);
-    } else {
-        result = str.substr(str.lastIndexOf('<td width="80%" valign="top">'), str.length);
+        userAnswerWrapper = userAnswer;
+    }
+    userAnswerWrapper += '</font>';
+    if(result.lastIndexOf(userAnswerWrapper) !== -1){
+        result = result.substr(result.lastIndexOf(userAnswerWrapper) +
+                userAnswerWrapper.length, result.length);
     }
 
     result = result.substr(0, result.indexOf("</td>"));
