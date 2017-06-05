@@ -123,13 +123,6 @@ function findGame(gameName) {
     });
 }
 
-//e.g
-// callGameWaterfall("905", "1234567999", '', (result) => {
-//     if (result) {
-//         console.log("end: " + result);
-//     }
-// });
-
 function callGame(game, sessionId, userAnswer, callback) {
     async.waterfall([
         callback => gameHttpRequest(game, sessionId, userAnswer, callback),
@@ -209,7 +202,6 @@ function cleanUp(str) {
     result = result.replace(/Release[\s\S]*?[\s\S] 6\/7/, '');
     //console.log(result);
     return result;
-
 }
 
 module.exports={

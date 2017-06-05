@@ -11,3 +11,10 @@ ListGamesIntent list all
 ListSavedGamesIntent list saved game
 ListSavedGamesIntent list saved games
 ListSavedGamesIntent list saved
+ResetGameIntent reset progress for {z|GameToReset}
+ResetGameIntent reset progress for {z z|GameToReset}
+ResetGameIntent reset game {z|GameToReset}
+ResetGameIntent reset game {z z|GameToReset}
+ResetGameIntent reset {z|GameToReset}
+ResetGameIntent reset {z z|GameToReset}
+

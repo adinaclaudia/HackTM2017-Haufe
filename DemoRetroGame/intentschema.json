@@ -19,10 +19,34 @@
       "intent": "SelectGameIntent"
     },
     {
+      "slots": [
+        {
+          "name": "GameToReset",
+          "type": "AMAZON.LITERAL"
+        }
+      ],
+      "intent": "ResetGameIntent"
+    },
+    {
       "intent": "ListGamesIntent"
     },
     {
       "intent": "ListSavedGamesIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    },
+    {
+      "intent": "AMAZON.YesIntent"
+    },
+    {
+      "intent": "AMAZON.NoIntent"
     }
   ]
 }
